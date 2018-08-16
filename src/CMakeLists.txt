@@ -13,3 +13,6 @@ target_compile_options(Vision PRIVATE
 target_include_directories(Vision PUBLIC
     ${PROJECT_SOURCE_DIR}/include
 )
+set_target_properties(Vision PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib"
+)

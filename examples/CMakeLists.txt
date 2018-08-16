@@ -7,3 +7,6 @@ target_link_libraries(webcam_picture PRIVATE
 target_compile_options(webcam_picture PRIVATE
     -std=c++14
 )
+set_target_properties(webcam_picture PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
+)

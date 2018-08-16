@@ -18,17 +18,20 @@ TODO: Installation instructions for OpenCV
 
 ## Build Instructions
 
-The build system for this project is generated with CMake. The "bin" 
-directory contains a simple bash script for out-of-source building. To use,
-make sure that you have CMake installed, then run the following from the 
+The build system for this project is generated with CMake. The "scripts" 
+directory contains a simple bash script for out-of-source building. It
+places the archives into a directory called "lib", and it places the
+executables into a directory called "bin".
+
+To use,make sure that you have CMake installed, then run the following from the 
 "Vision" directory:
 
 ```
-$ bash bin/build.sh
+$ bash scripts/build.sh
 ```
 
 There is also a script for cleaning up the build:
 
 ```
-$ bash bin/clean.sh
+$ bash scripts/clean.sh
 ```
