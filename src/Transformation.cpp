@@ -85,4 +85,84 @@ InvertColors :: apply (Image & image)
             set_colors(image, row, col);
 }
 
+/*----------------------- Statistical Transformations ------------------------*/
+
+Statistical :: Statistical (size_t boxsize)
+: boxsize_{boxsize}
+{}
+
+Statistical :: Box :: Box
+(size_t top, size_t bottom, size_t left, size_t right)
+: top_{top}, bottom_{bottom}, left_{left}, right_{right}
+{
+    assert(bottom_ > top_);
+    assert(right_ > left_);
+}
+
+bool
+Statistical :: Box :: Contains (size_t row, size_t col) const
+{
+    bool valid_row = (row >= bottom_ && row <= top_);
+    bool valid_col = (col >= left_ && col <= right_);
+    return valid_row && valid_col;
+}
+
+std::vector<Statistical::Box>
+Statistical :: GetBoxes (Image const & image) const
+{
+    size_t img_height = image.GetHeight();
+    size_t img_width  = image.GetWidth();
+    std::vector<Box> boxes;
+    for (size_t i = 0; i < img_height; i += boxsize_) {
+        size_t bottom = i + boxsize_ - 1;
+        bottom = bottom < img_height ? bottom : img_height - 1;
+        for (size_t j = 0; j < img_width; j += boxsize_) {
+            size_t right = j + boxsize_ - 1;
+            right = right < img_width ? right : img_width - 1;
+            boxes.emplace_back(i, bottom, j, right);
+        }
+    }
+    return boxes;
+}
+
+Average :: Average (size_t boxsize)
+: Statistical(boxsize)
+{}
+
+void
+Average :: apply (Image & image)
+{
+    auto boxes = GetBoxes(image);
+
+    std::vector<uint8_t> red_averages;
+    std::vector<uint8_t> green_averages;
+    std::vector<uint8_t> blue_averages;
+
+    // Calculate average RGB intensities for each box
+    for (auto const & box : boxes) {
+        int r = 0, g = 0, b = 0;
+        for (size_t i = box.Top(); i <= box.Bottom(); ++i) {
+            for (size_t j = box.Left(); j <= box.Right(); ++j) {
+                r += image.GetRed  (i, j);
+                g += image.GetGreen(i, j);
+                b += image.GetBlue (i, j);
+            }
+        }
+        red_averages.push_back  (r / box.Size());
+        green_averages.push_back(g / box.Size());
+        blue_averages.push_back (b / box.Size());
+    }
+
+    // Set the RGB intensities in original image
+    for (int index = 0; index < boxes.size(); ++index) {
+        auto & box = boxes.at(index);
+        for (size_t i = box.Top(); i <= box.Bottom(); ++i)
+            for (size_t j = box.Left(); j <= box.Right(); ++j) {
+                image.SetRed  (i, j, red_averages.at  (index));
+                image.SetGreen(i, j, green_averages.at(index));
+                image.SetBlue (i, j, blue_averages.at (index));
+            }
+    }
+}
+
 } // namespace Vision
