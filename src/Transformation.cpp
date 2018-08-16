@@ -23,19 +23,46 @@ GrayscaleTransformation :: apply (Image & image)
     };
 
     // Lamda for changing all the RGB values to the same value
-    auto set_colors = [](Image & i, size_t row, size_t col, uint8_t intensity) {
+    auto set_colors = [&average](Image & i, size_t row, size_t col) {
+        uint8_t r = i.GetRed   (row, col);
+        uint8_t g = i.GetGreen (row, col);
+        uint8_t b = i.GetBlue  (row, col);
+        uint8_t intensity = average(r, g, b);
         i.SetRed   (row, col, intensity);
         i.SetGreen (row, col, intensity);
         i.SetBlue  (row, col, intensity);
     };
 
     for (int row = 0; row < image.GetHeight(); ++row)
-        for (int col = 0; col < image.GetWidth(); ++col) {
-            uint8_t r = image.GetRed   (row, col);
-            uint8_t g = image.GetGreen (row, col);
-            uint8_t b = image.GetBlue  (row, col);
-            set_colors(image, row, col, average(r, g, b));
-        }
+        for (int col = 0; col < image.GetWidth(); ++col)
+            set_colors(image, row, col);
+}
+
+/*----------------------------- AdjustBrightness -----------------------------*/
+
+AdjustBrightness :: AdjustBrightness (int offset)
+: offset_{offset}
+{}
+
+void
+AdjustBrightness :: apply (Image & image)
+{
+    // Lambda for offsetting the intensities
+    auto adjust = [this](Image & i, int row, int col) {
+        int r = i.GetRed   (row, col) + offset_;
+        int g = i.GetGreen (row, col) + offset_;
+        int b = i.GetBlue  (row, col) + offset_;
+        r = r < 0 ? 0 : (r > 255 ? 255 : r);
+        g = g < 0 ? 0 : (g > 255 ? 255 : g);
+        b = b < 0 ? 0 : (b > 255 ? 255 : b);
+        i.SetRed  (row, col, r);
+        i.SetGreen(row, col, g);
+        i.SetBlue (row, col, b);
+    };
+
+    for (int row = 0; row < image.GetHeight(); ++row)
+        for (int col = 0; col < image.GetWidth(); ++col)
+            adjust (image, row, col);
 }
 
 } // namespace Vision

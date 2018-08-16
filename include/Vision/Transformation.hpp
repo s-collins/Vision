@@ -33,6 +33,17 @@ public:
     void apply (Image &) override;
 };
 
+/*----------------------------- AdjustBrightness -----------------------------*/
+
+class AdjustBrightness : public Transformation
+{
+public:
+    explicit AdjustBrightness (int offset);
+    void apply (Image &) override;
+private:
+    int offset_;
+};
+
 } // namespace Vision
 
 #endif // VISION_TRANSFORMATION_HPP
