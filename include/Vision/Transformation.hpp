@@ -27,7 +27,7 @@ public:
 
 /*------------------------- Grayscale Transformation -------------------------*/
 
-class GrayscaleTransformation : public Transformation
+class Grayscale : public Transformation
 {
 public:
     void apply (Image &) override;

@@ -28,7 +28,7 @@ int main ()
     unique_ptr<Editor> editor { factory->MakeEditor() };
     editor->add(new InvertColors);
     editor->add(new AdjustBrightness (-100));
-    editor->add(new GrayscaleTransformation);
+    editor->add(new Grayscale);
     editor->edit(*image);
 
     // Display the picture
