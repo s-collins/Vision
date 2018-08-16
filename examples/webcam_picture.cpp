@@ -23,11 +23,10 @@ int main ()
 
     // Make the camera
     // (0 -> built-in camera; 1 -> auxiliary camera)
-    int device_number = 0;
-    unique_ptr<Camera> camera {factory->MakeCamera(device_number)};
+    unique_ptr<Camera> camera { factory->MakeCamera(Camera::BUILT_IN_CAM) };
 
     // Make the display
-    unique_ptr<Display> display {factory->MakeDisplay("Webcam Example")};
+    unique_ptr<Display> display { factory->MakeDisplay("Webcam Example") };
 
     // Take a picture
     unique_ptr<Image> image { camera->TakePicture() };

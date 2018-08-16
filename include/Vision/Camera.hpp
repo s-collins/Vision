@@ -26,6 +26,8 @@ class Camera
 public:
     virtual ~Camera () = default;
     virtual Image* TakePicture () = 0;
+public:
+    enum {BUILT_IN_CAM = 0, AUXILIARY_CAM = 1};
 };
 
 /*------------------------------ OpenCV Camera -------------------------------*/
