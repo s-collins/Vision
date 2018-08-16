@@ -1,8 +1,10 @@
 add_library(Vision
     Camera.cpp
     Display.cpp
+    Editor.cpp
     Factory.cpp
     Image.cpp
+    Transformation.cpp
 )
 target_link_libraries(Vision PRIVATE
     ${OpenCV_LIBS}
