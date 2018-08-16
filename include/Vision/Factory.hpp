@@ -22,14 +22,16 @@ namespace Vision {
 // types are only used by pointer or reference. Saves a little compile time.
 class Camera;
 class Display;
+class Editor;
 
 /*------------------------------- Base Factory -------------------------------*/
 
 class Factory
 {
 public:
-    virtual Camera*  MakeCamera  (int device_no) = 0;
-    virtual Display* MakeDisplay (char const *) = 0;
+    virtual Camera*  MakeCamera  (int)           = 0;
+    virtual Display* MakeDisplay (char const *)  = 0;
+    virtual Editor*  MakeEditor  ()              = 0;
 };
 
 /*------------------------------ OpenCV Factory ------------------------------*/
@@ -37,8 +39,9 @@ public:
 class OpenCVFactory : public Factory
 {
 public:
-    Camera*  MakeCamera  (int device_no) override;
-    Display* MakeDisplay (char const * title) override;
+    Camera*  MakeCamera  (int)          override;
+    Display* MakeDisplay (char const *) override;
+    Editor*  MakeEditor  ()             override;
 };
 
 } // namespace Vision

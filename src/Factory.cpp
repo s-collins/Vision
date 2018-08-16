@@ -9,6 +9,7 @@ Purpose   : Implement the concrete Factory classes.
 #include "Vision/Factory.hpp"
 #include "Vision/Camera.hpp"
 #include "Vision/Display.hpp"
+#include "Vision/Editor.hpp"
 
 namespace Vision {
 
@@ -24,6 +25,12 @@ Display*
 OpenCVFactory :: MakeDisplay (char const * title)
 {
     return new OpenCVDisplay (title);
+}
+
+Editor*
+OpenCVFactory :: MakeEditor ()
+{
+    return new OpenCVEditor;
 }
 
 } // namespace Vision
