@@ -65,4 +65,24 @@ AdjustBrightness :: apply (Image & image)
             adjust (image, row, col);
 }
 
+/*------------------------------- InvertColors -------------------------------*/
+
+void
+InvertColors :: apply (Image & image)
+{
+    auto set_colors = [&](Image & i, size_t row, size_t col) {
+        uint8_t const max = 255;
+        uint8_t r = max - i.GetRed   (row, col);
+        uint8_t g = max - i.GetGreen (row, col);
+        uint8_t b = max - i.GetBlue  (row, col);
+        i.SetRed   (row, col, r);
+        i.SetGreen (row, col, g);
+        i.SetBlue  (row, col, b);
+    };
+
+    for (int row = 0; row < image.GetHeight(); ++row)
+        for (int col = 0; col < image.GetWidth(); ++col)
+            set_colors(image, row, col);
+}
+
 } // namespace Vision

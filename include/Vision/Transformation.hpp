@@ -44,6 +44,14 @@ private:
     int offset_;
 };
 
+/*------------------------------- InvertColors -------------------------------*/
+
+class InvertColors : public Transformation
+{
+public:
+    void apply (Image &) override;
+};
+
 } // namespace Vision
 
 #endif // VISION_TRANSFORMATION_HPP
