@@ -91,6 +91,13 @@ public:
     void apply (Image &) override;
 };
 
+class StandardDeviation : public Statistical
+{
+public:
+    explicit StandardDeviation (size_t boxsize);
+    void apply (Image &) override;
+};
+
 } // namespace Vision
 
 #endif // VISION_TRANSFORMATION_HPP

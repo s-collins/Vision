@@ -165,4 +165,65 @@ Average :: apply (Image & image)
     }
 }
 
+StandardDeviation :: StandardDeviation (size_t boxsize)
+: Statistical(boxsize)
+{}
+
+void
+StandardDeviation :: apply (Image & image)
+{
+    auto boxes = GetBoxes(image);
+
+    // Calculate average RGB intensities for each box
+    std::vector<uint8_t> red_averages;
+    std::vector<uint8_t> green_averages;
+    std::vector<uint8_t> blue_averages;
+    for (auto const & box : boxes) {
+        int r = 0, g = 0, b = 0;
+        for (size_t i = box.Top(); i <= box.Bottom(); ++i) {
+            for (size_t j = box.Left(); j <= box.Right(); ++j) {
+                r += image.GetRed  (i, j);
+                g += image.GetGreen(i, j);
+                b += image.GetBlue (i, j);
+            }
+        }
+        red_averages.push_back  (r / box.Size());
+        green_averages.push_back(g / box.Size());
+        blue_averages.push_back (b / box.Size());
+    }
+
+    // Calculate the standard deviation of RGB intensities for each box
+    std::vector<uint8_t> red_stdevs;
+    std::vector<uint8_t> green_stdevs;
+    std::vector<uint8_t> blue_stdevs;
+    for (int index = 0; index < boxes.size(); ++index) {
+        auto & box = boxes.at(index);
+        int r = 0, g = 0, b = 0;
+        for (size_t i = box.Top(); i <= box.Bottom(); ++i) {
+            for (size_t j = box.Left(); j <= box.Right(); ++j) {
+                r += pow(image.GetRed  (i, j) - red_averages.at(index),   2);
+                g += pow(image.GetGreen(i, j) - green_averages.at(index), 2);
+                b += pow(image.GetBlue (i, j) - blue_averages.at(index),  2);
+            }
+        }
+        r /= box.Size() - 1;
+        g /= box.Size() - 1;
+        b /= box.Size() - 1;
+        red_stdevs.push_back  (sqrt(r));
+        green_stdevs.push_back(sqrt(g));
+        blue_stdevs.push_back (sqrt(b));
+    }
+
+    // Set the RGB intensities in original image
+    for (int index = 0; index < boxes.size(); ++index) {
+        auto & box = boxes.at(index);
+        for (size_t i = box.Top(); i <= box.Bottom(); ++i)
+            for (size_t j = box.Left(); j <= box.Right(); ++j) {
+                image.SetRed  (i, j, red_stdevs.at  (index));
+                image.SetGreen(i, j, green_stdevs.at(index));
+                image.SetBlue (i, j, blue_stdevs.at (index));
+            }
+    }
+}
+
 } // namespace Vision
