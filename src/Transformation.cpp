@@ -65,6 +65,63 @@ AdjustBrightness :: apply (Image & image)
             adjust (image, row, col);
 }
 
+/*------------------------------ AdjustContrast ------------------------------*/
+
+AdjustContrast :: AdjustContrast (double slope)
+: slope_{slope}
+{
+    assert(slope > 0);
+}
+
+void
+AdjustContrast :: apply (Image & image)
+{
+    auto adjust = [this](Image & i, int row, int col) {
+        int r = i.GetRed  (row, col);
+        int g = i.GetGreen(row, col);
+        int b = i.GetBlue (row, col);
+        r = (r - 128) * slope_ + 128;
+        g = (g - 128) * slope_ + 128;
+        b = (b - 128) * slope_ + 128;
+        r = r < 0 ? 0 : (r > 255 ? 255 : r);
+        g = g < 0 ? 0 : (g > 255 ? 255 : g);
+        b = b < 0 ? 0 : (b > 255 ? 255 : b);
+        i.SetRed  (row, col, r);
+        i.SetGreen(row, col, g);
+        i.SetBlue (row, col, b);
+    };
+
+    for (int row = 0; row < image.GetHeight(); ++row)
+        for (int col = 0; col < image.GetWidth(); ++col)
+            adjust (image, row, col);
+}
+
+/*-------------------------------- Threshold ---------------------------------*/
+
+Threshold :: Threshold (uint8_t level)
+: level_{level}
+{}
+
+void
+Threshold :: apply (Image & image)
+{
+    auto adjust = [this](Image & i, int row, int col) {
+        int r = i.GetRed  (row, col);
+        int g = i.GetGreen(row, col);
+        int b = i.GetBlue (row, col);
+        r = r < level_ ? 0 : 255;
+        g = g < level_ ? 0 : 255;
+        b = b < level_ ? 0 : 255;
+        i.SetRed  (row, col, r);
+        i.SetGreen(row, col, g);
+        i.SetBlue (row, col, b);
+    };
+
+    for (int row = 0; row < image.GetHeight(); ++row)
+        for (int col = 0; col < image.GetWidth(); ++col)
+            adjust (image, row, col);
+}
+
 /*------------------------------- InvertColors -------------------------------*/
 
 void

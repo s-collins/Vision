@@ -48,6 +48,28 @@ private:
     int offset_;
 };
 
+/*------------------------------ AdjustContrast ------------------------------*/
+
+class AdjustContrast : public Transformation
+{
+public:
+   explicit AdjustContrast (double slope);
+   void apply (Image &) override;
+private:
+    double slope_;
+};
+
+/*-------------------------------- Threshold ---------------------------------*/
+
+class Threshold : public Transformation
+{
+public:
+    explicit Threshold (uint8_t level);
+   void apply (Image &) override;
+private:
+    uint8_t level_;
+};
+
 /*------------------------------- InvertColors -------------------------------*/
 
 class InvertColors : public Transformation
@@ -89,12 +111,16 @@ private:
     size_t boxsize_;
 };
 
+/*--------------------------------- Average ----------------------------------*/
+
 class Average : public Statistical
 {
 public:
     explicit Average (size_t boxsize);
     void apply (Image &) override;
 };
+
+/*---------------------------- Standard Deviation ----------------------------*/
 
 class StandardDeviation : public Statistical
 {
