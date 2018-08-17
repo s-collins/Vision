@@ -27,9 +27,10 @@ int main ()
     // Create an editor and add some transformations
     unique_ptr<Editor> editor { factory->MakeEditor() };
     //editor->add(new InvertColors);
-    //editor->add(new Grayscale);
     //editor->add(new Average(10));
-    editor->add(new StandardDeviation (4));
+    editor->add(new StandardDeviation (8));
+    editor->add(new Grayscale);
+    editor->add(new InvertColors);
     editor->edit(*image);
 
     // Display the picture

@@ -107,6 +107,37 @@ Statistical :: Box :: Contains (size_t row, size_t col) const
     return valid_row && valid_col;
 }
 
+Statistical :: Box :: RGB_Tuple
+Statistical :: Box :: Average (Image & image) const
+{
+    int r = 0, g = 0, b = 0;
+    for (size_t row = Top(); row <= Bottom(); ++row) {
+        for (size_t col = Left(); col <= Right(); ++col) {
+            r += image.GetRed  (row, col);
+            g += image.GetGreen(row, col);
+            b += image.GetBlue (row, col);
+        }
+    }
+    size_t n = Size();
+    return RGB_Tuple {r / n, g / n, b / n};
+}
+
+Statistical :: Box :: RGB_Tuple
+Statistical :: Box :: StDev (Image & image) const
+{
+    int r = 0, g = 0, b = 0;
+    auto averages = Average(image);
+    for (size_t row = Top(); row <= Bottom(); ++row) {
+        for (size_t col = Left(); col <= Right(); ++col) {
+            r += pow(image.GetRed  (row, col) - std::get<0>(averages), 2);
+            g += pow(image.GetGreen(row, col) - std::get<1>(averages), 2);
+            b += pow(image.GetBlue (row, col) - std::get<2>(averages), 2);
+        }
+    }
+    size_t n = Size() - 1;
+    return RGB_Tuple { sqrt(r / n), sqrt(g / n), sqrt(b / n) };
+}
+
 std::vector<Statistical::Box>
 Statistical :: GetBoxes (Image const & image) const
 {
@@ -125,6 +156,8 @@ Statistical :: GetBoxes (Image const & image) const
     return boxes;
 }
 
+/*--------------------------------- Average ----------------------------------*/
+
 Average :: Average (size_t boxsize)
 : Statistical(boxsize)
 {}
@@ -140,17 +173,10 @@ Average :: apply (Image & image)
 
     // Calculate average RGB intensities for each box
     for (auto const & box : boxes) {
-        int r = 0, g = 0, b = 0;
-        for (size_t i = box.Top(); i <= box.Bottom(); ++i) {
-            for (size_t j = box.Left(); j <= box.Right(); ++j) {
-                r += image.GetRed  (i, j);
-                g += image.GetGreen(i, j);
-                b += image.GetBlue (i, j);
-            }
-        }
-        red_averages.push_back  (r / box.Size());
-        green_averages.push_back(g / box.Size());
-        blue_averages.push_back (b / box.Size());
+       auto avg = box.Average(image);
+       red_averages.push_back  (std::get<0>(avg));
+       green_averages.push_back(std::get<1>(avg));
+       blue_averages.push_back (std::get<2>(avg));
     }
 
     // Set the RGB intensities in original image
@@ -165,6 +191,8 @@ Average :: apply (Image & image)
     }
 }
 
+/*---------------------------- Standard Deviation ----------------------------*/
+
 StandardDeviation :: StandardDeviation (size_t boxsize)
 : Statistical(boxsize)
 {}
@@ -174,44 +202,16 @@ StandardDeviation :: apply (Image & image)
 {
     auto boxes = GetBoxes(image);
 
-    // Calculate average RGB intensities for each box
-    std::vector<uint8_t> red_averages;
-    std::vector<uint8_t> green_averages;
-    std::vector<uint8_t> blue_averages;
-    for (auto const & box : boxes) {
-        int r = 0, g = 0, b = 0;
-        for (size_t i = box.Top(); i <= box.Bottom(); ++i) {
-            for (size_t j = box.Left(); j <= box.Right(); ++j) {
-                r += image.GetRed  (i, j);
-                g += image.GetGreen(i, j);
-                b += image.GetBlue (i, j);
-            }
-        }
-        red_averages.push_back  (r / box.Size());
-        green_averages.push_back(g / box.Size());
-        blue_averages.push_back (b / box.Size());
-    }
-
-    // Calculate the standard deviation of RGB intensities for each box
     std::vector<uint8_t> red_stdevs;
     std::vector<uint8_t> green_stdevs;
     std::vector<uint8_t> blue_stdevs;
-    for (int index = 0; index < boxes.size(); ++index) {
-        auto & box = boxes.at(index);
-        int r = 0, g = 0, b = 0;
-        for (size_t i = box.Top(); i <= box.Bottom(); ++i) {
-            for (size_t j = box.Left(); j <= box.Right(); ++j) {
-                r += pow(image.GetRed  (i, j) - red_averages.at(index),   2);
-                g += pow(image.GetGreen(i, j) - green_averages.at(index), 2);
-                b += pow(image.GetBlue (i, j) - blue_averages.at(index),  2);
-            }
-        }
-        r /= box.Size() - 1;
-        g /= box.Size() - 1;
-        b /= box.Size() - 1;
-        red_stdevs.push_back  (sqrt(r));
-        green_stdevs.push_back(sqrt(g));
-        blue_stdevs.push_back (sqrt(b));
+
+    // Calculate standard deviation of RGB intensities for each box
+    for (auto & box : boxes) {
+        auto stdev = box.StDev(image);
+        red_stdevs.push_back  (std::get<0>(stdev));
+        green_stdevs.push_back(std::get<1>(stdev));
+        blue_stdevs.push_back (std::get<2>(stdev));
     }
 
     // Set the RGB intensities in original image

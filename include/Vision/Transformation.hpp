@@ -12,6 +12,7 @@ Purpose   : Defines an abstract base class for transformations that can be
 #define VISION_TRANSFORMATION_HPP
 
 #include <cstddef>
+#include <tuple>
 #include <vector>
 
 namespace Vision {
@@ -74,6 +75,10 @@ protected:
         size_t Left   () const {return left_;}
         size_t Right  () const {return right_;}
         size_t Size   () const {return (bottom_ - top_ + 1) * (right_ - left_ + 1);}
+
+        using RGB_Tuple = std::tuple<uint8_t, uint8_t, uint8_t>;
+        RGB_Tuple Average (Image &) const;
+        RGB_Tuple StDev   (Image &) const;
 
     private:
         size_t top_, bottom_, left_, right_;
