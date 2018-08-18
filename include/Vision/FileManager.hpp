@@ -5,14 +5,22 @@
 
 namespace Vision {
 
+/*----------------------------- FileManager Base -----------------------------*/
+
 class FileManager
 {
 public:
-    Image* OpenImage (std::string path);
-    void   SaveImage (std::string path, Image const &);
+    virtual Image* OpenImage (std::string)                = 0;
+    virtual void   SaveImage (std::string, Image const &) = 0;
+};
 
-protected:
-    FileManager * instance_;
+/*---------------------------- OpenCV FileManager ----------------------------*/
+
+class OpenCVFileManager : public FileManager
+{
+public:
+    Image* OpenImage (std::string)                override;
+    void   SaveImage (std::string, Image const &) override;
 };
 
 } // namespace Vision

@@ -40,6 +40,7 @@ int main ()
     // Display the picture
     display->show(*image);
 
-    FileManager files;
-    files.SaveImage("bin/Test.png", *image);
+    // Save the picture
+    unique_ptr<FileManager> filesystem { factory->MakeFileManager() };
+    filesystem->SaveImage("bin/Test.png", *image);
 }

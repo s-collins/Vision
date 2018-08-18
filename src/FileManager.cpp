@@ -3,8 +3,10 @@
 
 namespace Vision {
 
+/*---------------------------- OpenCV FileManager ----------------------------*/
+
 Image*
-FileManager :: OpenImage (std::string path)
+OpenCVFileManager :: OpenImage (std::string path)
 {
     cv::Mat3b cv_matrix = cv::imread(path, CV_LOAD_IMAGE_COLOR);
     if (cv_matrix.empty())
@@ -13,7 +15,7 @@ FileManager :: OpenImage (std::string path)
 }
 
 void
-FileManager :: SaveImage (std::string path, Image const & image)
+OpenCVFileManager :: SaveImage (std::string path, Image const & image)
 {
     cv::Mat3b cv_matrix = dynamic_cast<OpenCVImage const &>(image).GetMatrix();
     cv::imwrite(path, cv_matrix);
