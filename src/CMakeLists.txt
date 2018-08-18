@@ -3,6 +3,7 @@ add_library(Vision
     Display.cpp
     Editor.cpp
     Factory.cpp
+    FileManager.cpp
     Image.cpp
     Transformation.cpp
 )
