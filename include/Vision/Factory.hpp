@@ -23,15 +23,17 @@ namespace Vision {
 class Camera;
 class Display;
 class Editor;
+class FileManager;
 
 /*------------------------------- Base Factory -------------------------------*/
 
 class Factory
 {
 public:
-    virtual Camera*  MakeCamera  (int)           = 0;
-    virtual Display* MakeDisplay (char const *)  = 0;
-    virtual Editor*  MakeEditor  ()              = 0;
+    virtual Camera*      MakeCamera      (int)           = 0;
+    virtual Display*     MakeDisplay     (char const *)  = 0;
+    virtual Editor*      MakeEditor      ()              = 0;
+    virtual FileManager* MakeFileManager ()              = 0;
 };
 
 /*------------------------------ OpenCV Factory ------------------------------*/
@@ -39,9 +41,10 @@ public:
 class OpenCVFactory : public Factory
 {
 public:
-    Camera*  MakeCamera  (int)          override;
-    Display* MakeDisplay (char const *) override;
-    Editor*  MakeEditor  ()             override;
+    Camera*      MakeCamera      (int)          override;
+    Display*     MakeDisplay     (char const *) override;
+    Editor*      MakeEditor      ()             override;
+    FileManager* MakeFileManager ()             override;
 };
 
 } // namespace Vision
