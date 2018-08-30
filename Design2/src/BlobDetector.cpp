@@ -52,17 +52,40 @@ cv::Mat BlobDetector :: grayscale_invariant (double theta)
         }
     }
 
-    // Normalize
+/*
     cv::Mat normalized (s.height, s.width, CV_8UC1);
     for (int i = 0; i < s.height; ++i)
         for (int j = 0; j < s.width; ++j)
             normalized.at<uint8_t>(i, j) = (invariant.at<float>(i, j) - min) * 255 / (max - min);
+            */
 
-    return normalized;
+    return invariant;
 }
 
 cv::Mat BlobDetector :: normalize (cv::Mat input)
 {
+    cv::Size s = input.size();
+
+    // Find the minimum and maximum values
+    float min = 0, max = 0;
+    for (int i = 0; i < s.height; ++i) {
+        for (int j = 0; j < s.width; ++j) {
+            auto value = input.at<float>(i, j);
+            min = value < min ? value : min;
+            max = value > max ? value : max;
+        }
+    }
+
+    // Map the values to the range [0, 255]
+    cv::Mat output (s.height, s.width, CV_8UC1);
+    for (int i = 0; i < s.height; ++i) {
+        for (int j = 0; j < s.width; ++j) {
+            auto value = input.at<float>(i, j);
+            value = (value - min) * 255 / (max - min);
+            output.at<uint8_t>(i, j) = static_cast<uint8_t>(value);
+        }
+    }
+    return output;
 }
 
 } // namespace Vision

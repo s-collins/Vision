@@ -12,9 +12,9 @@ public:
     explicit BlobDetector (cv::Mat const image);
     std::vector<cv::Mat> chromaticity ();
     cv::Mat grayscale_invariant (double theta);
+    cv::Mat normalize (cv::Mat);
 
 private:
-    cv::Mat normalize (cv::Mat);
     cv::Mat original_;
 };
 
