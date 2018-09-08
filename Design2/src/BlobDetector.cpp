@@ -77,12 +77,12 @@ cv::Mat BlobDetector :: normalize (cv::Mat input)
     }
 
     // Map the values to the range [0, 255]
-    cv::Mat output (s.height, s.width, CV_8UC1);
+    cv::Mat output (s.height, s.width, CV_32FC1);
     for (int i = 0; i < s.height; ++i) {
         for (int j = 0; j < s.width; ++j) {
             auto value = input.at<float>(i, j);
             value = (value - min) * 255 / (max - min);
-            output.at<uint8_t>(i, j) = static_cast<uint8_t>(value);
+            output.at<float>(i, j) = value;
         }
     }
     return output;
